@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:vm="clr-namespace:WordQuiz.ViewModels" xmlns:mod="clr-namespace:WordQuiz.Models" xmlns:xamanimation="clr-namespace:Xamanimation;assembly=Xamanimation"
+             x:Class="WordQuiz.Views.MainPage"      
+             x:DataType="vm:MainPageViewModel"
+             Title="Fruit Quiz">
+    <Grid RowDefinitions="40,Auto,Auto,*">
+        <FlexLayout Grid.Row="0"        
+                    JustifyContent="SpaceBetween"   
+                    Direction="Row">
+            <Label Margin="5"          
+                   Text="{Binding Score, StringFormat='{0}/4'}"
+                   FontAttributes="Bold"
+                   TextColor="Black"
+                   FontSize="Title">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="{Binding Score}"/>
+                        <Span Text="/"/>
+                        <Span Text="{Binding Words.Count}"/>
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+            <Label Margin="5" 
+                   Text="{Binding Time, StringFormat='{0:mm\\:ss}'}"               
+                   FontAttributes="Bold"           
+                   TextColor="Black"
+                   FontSize="Title"/>
+        </FlexLayout>
+        <Entry Grid.Row="1"
+               Placeholder="Enter the keyword"
+               Text="{Binding Search}"
+               IsVisible="{Binding IsTimeRunning}">
+        </Entry>
+        <Button Grid.Row="2" 
+                Text="Play Quiz" 
+                BackgroundColor="#84b623"
+                TextColor="White"
+                Command="{Binding PlayQuizCommand}">
+            <Button.Triggers>
+                <DataTrigger TargetType="Button"
+                             Binding="{Binding IsTimeRunning}"
+                             Value="True">
+                    <Setter Property="Text" Value="Stop"/>
+                    <Setter Property="Command" Value="{Binding StopQuizCommand}"/>
+                </DataTrigger>
+            </Button.Triggers>
+        </Button>
+        <CollectionView Grid.Row="3" 
+                        ItemsSource="{Binding Words}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="mod:Word">
+                    <ContentView>
+                        <Frame BorderColor="Black" 
+                               CornerRadius="0" 
+                               BackgroundColor="#AD8552" 
+                               Padding="5,0,5,0">
+                            <Label Text="{Binding Name}" 
+                                   FontSize="Large"
+                                   TextColor="White"
+                                   IsVisible="{Binding Check}"
+                                   HorizontalTextAlignment="Center">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" 
+                                                 Binding="{Binding Check}"   
+                                                 Value="False">
+                                        <DataTrigger.EnterActions>
+                                            <xamanimation:AnimateDouble TargetProperty="Label.Opacity" From="0"/>
+                                        </DataTrigger.EnterActions>
+                                        <DataTrigger.ExitActions>
+                                            <xamanimation:AnimateDouble TargetProperty="Label.Opacity" To="1"/>
+                                        </DataTrigger.ExitActions>
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                        </Frame>
+                    </ContentView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>
